@@ -1,0 +1,7 @@
+
+/* Estilos globales básicos para que todo se vea limpio */
+body {
+  background-color: #f4f6f8;
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}

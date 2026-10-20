@@ -1,6 +1,7 @@
 //evelin  pestaña 1 
  
-
+//evelin  pestaña 1 
+ 
 import { useState } from "react";
 import bcrypt from "bcryptjs";
 import { Usuario_Datos } from "../Base_Nombres/Usuarios";
@@ -12,13 +13,16 @@ function InicioSesion({ entrar }) {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (!user || !pass) return setError("Llena todos los campos");
-
-    const cuenta = Usuario_Datos.find(u => u.usuario === user);
     
-    // Comparamos la contraseña escrita con la encriptada
-    if (cuenta && bcrypt.compareSync(pass, cuenta.passwordEncriptada)) {
-      entrar(); // Le avisamos a App.jsx que ya entró
+    // .trim() limpia los espacios en blanco accidentales
+    if (!user.trim() || !pass.trim()) return setError("Llena todos los campos");
+
+    // Buscamos al usuario limpiando también lo que escribió
+    const cuenta = Usuario_Datos.find(u => u.usuario === user.trim());
+    
+    // Comparamos la contraseña (también limpia)
+    if (cuenta && bcrypt.compareSync(pass.trim(), cuenta.passwordEncriptada)) {
+      entrar(); 
     } else {
       setError("Usuario o contraseña incorrectos");
     }
@@ -32,15 +36,19 @@ function InicioSesion({ entrar }) {
         
         <form onSubmit={handleLogin}>
           <div className="mb-3">
-            <label>Ingresar Usuario:</label>
+            <label className="form-label">Ingresar Usuario:</label>
             <input type="text" className="form-control" onChange={e => setUser(e.target.value)} />
           </div>
           <div className="mb-3">
-            <label>Ingresar Contraseña:</label>
+            <label className="form-label">Ingresar Contraseña:</label>
             <input type="password" className="form-control" onChange={e => setPass(e.target.value)} />
           </div>
           {error && <div className="alert alert-danger p-2 text-center">{error}</div>}
           <button type="submit" className="btn btn-primary w-100">Iniciar Sesión</button>
+          
+          <div className="text-center mt-3">
+            <a href="#" className="text-decoration-none">¿Olvidaste tu contraseña?</a>
+          </div>
         </form>
       </div>
     </div>

@@ -1,93 +1,66 @@
-import 'bootstrap/dist/css/bootstrap.min.css'
 import { useState } from "react";
-import "./index.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 
-import Login from "./Componentes/Login";
-import Navbar from "./Componentes/Navbar";
-import EstadoLaboratorios from "./Componentes/EstadoLaboratorios";
-import FormularioReserva from "./Componentes/FormularioReserva";
-import Asistencia from "./Componentes/Asistencia";
-import HorarioAdmin from "./Componentes/HorarioAdmin";
-     
+import InicioSesion from "./Componentes/InicioSesion";
+import DiasLibres from "./Componentes/DiasLibres";
+import ReporteSemanal from "./Componentes/ReporteSemanal";
+import Estatus from "./Componentes/Estatus";
+
 import { gestorLaboratorios } from "./Clases/gestorLaboratorios";
-import { GestorAsistencia } from "./Clases/gestorAsistencia";
 import { Laboratorio_Datos } from "./Base_Nombres/Laboratorios";
 import { Reserva_Datos } from "./Base_Nombres/Reservas";
 
 function App() {
-  const [gestor] = useState(
-    () => new gestorLaboratorios(Laboratorio_Datos, Reserva_Datos)
-  );
+  const [sesion, setSesion] = useState(false);
+  const [pestana, setPestana] = useState("reservar");
 
-  const [gestorAsistencia] = useState(
-    () => new GestorAsistencia(Reserva_Datos)
-    
-  );
+  const [gestor] = useState(() => {
+    return new gestorLaboratorios(Laboratorio_Datos, Reserva_Datos);
+  });
 
-  const [sesion, setSesion] = useState(null);
-  const [vista, setVista] = useState("estado");
-  const [labSeleccionado, setLabSeleccionado] = useState(null);
+  const [, setRefresh] = useState(0);
+  const actualizar = () => setRefresh((prev) => prev + 1);
 
   if (!sesion) {
-    return <Login onLogin={(u) => setSesion(u)} />;
+    return <InicioSesion entrar={() => setSesion(true)} />;
   }
-
-  const laboratorios = gestor.obtenerLaboratorios();
-  const reservas = gestor.obtenerReservas();
 
   return (
     <div>
-      <Navbar
-        sesion={sesion}
-        vista={vista}
-        setVista={setVista}
-        onLogout={() => {
-          setSesion(null);
-          setVista("estado");
-          setLabSeleccionado(null);
-        }}
-      />
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark px-3 shadow-sm">
+        <div className="container-fluid">
+          <span className="navbar-brand fw-bold">ITSR - Laboratorios</span>
+          <div className="d-flex gap-2 flex-wrap">
+            <button
+              className={`btn btn-sm ${pestana === "reservar" ? "btn-light" : "btn-outline-light"}`}
+              onClick={() => setPestana("reservar")}
+            >
+              Días Libres
+            </button>
+            <button
+              className={`btn btn-sm ${pestana === "reporte" ? "btn-light" : "btn-outline-light"}`}
+              onClick={() => setPestana("reporte")}
+            >
+              Reporte Semanal
+            </button>
+            <button
+              className={`btn btn-sm ${pestana === "estatus" ? "btn-light" : "btn-outline-light"}`}
+              onClick={() => setPestana("estatus")}
+            >
+              Estatus
+            </button>
+            <button className="btn btn-sm btn-danger ms-2" onClick={() => setSesion(false)}>
+              Cerrar Sesión
+            </button>
+          </div>
+        </div>
+      </nav>
 
-      <main>
-        {vista === "estado" && (
-          <EstadoLaboratorios
-            laboratorios={laboratorios}
-            onReservar={(lab) => {
-              setLabSeleccionado(lab);
-              setVista("reserva");
-            }}
-          />
-        )}
-
-        {vista === "reserva" && labSeleccionado && (
-          <FormularioReserva
-            laboratorio={labSeleccionado}
-            onGuardar={(datos) => {
-              gestor.registrarReserva(datos);
-              alert("Reserva registrada ");
-              setLabSeleccionado(null);
-              setVista("estado");
-            }}
-            onCancelar={() => {
-              setLabSeleccionado(null);
-              setVista("estado");
-            }}
-          />
-        )}
-
-        {vista === "asistencia" && (
-          <Asistencia
-            reservas={reservas}
-            onMarcar={(id, estado) =>
-              gestorAsistencia.marcarAsistencia(id, estado)
-            }
-          />
-        )}
-
-        {vista === "admin" && sesion.rol === "admin" && (
-          <HorarioAdmin laboratorios={laboratorios} />
-        )}
-      </main>
+      <div className="container mt-3">
+        {gestor && pestana === "reservar" && <DiasLibres gestor={gestor} actualizar={actualizar} />}
+        {gestor && pestana === "reporte" && <ReporteSemanal gestor={gestor} actualizar={actualizar} />}
+        {gestor && pestana === "estatus" && <Estatus gestor={gestor} />}
+      </div>
     </div>
   );
 }
