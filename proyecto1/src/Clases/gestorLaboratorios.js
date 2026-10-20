@@ -1,39 +1,19 @@
-export class gestorLaboratorios {
-  constructor(laboratorios, reservas) {
-    this.laboratorios = [...laboratorios];
-    this.reservas = [...reservas];
+export class gestorLaborartorio{
+  constructor(laboratorio, reservas){
+    this.laboratorio=laboratorio
+    this.reservas=[...reservas]
+    this.horario=["7-0 am ", "9-12 ", "12-2 pm", "2-4pm"]
+    this.dias=["Lunes", "Martes", "Miercoles", "Jueves", "Viernes" , "Sabado"]
   }
 
-  obtenerLaboratorios() {
-    return this.laboratorios;
+  guardarReserva(nueva){
+    this.reserva.push({...nueva, id : Date.now(), asistio: null})
   }
 
-  obtenerLaboratorioPorId(id) {
-    return this.laboratorios.find((l) => l.id === id);
-  }
+  marcarAsistencia(id, estado){
+    const reserva=this.reserva.find(r=> r.id ===id)
+    if(reserva) reserva.asistio= estado
 
-  contarEstados() {
-    const ocupados = this.laboratorios.filter((l) => l.estado === "ocupado").length;
-    const disponibles = this.laboratorios.filter((l) => l.estado === "desocupado").length;
-    return { total: this.laboratorios.length, ocupados, disponibles };
-  }
-
-  registrarReserva(reserva) {
-    const nuevoId = this.reservas.length + 1;
-    const nueva = { ...reserva, id: nuevoId, asistencia: null };
-    this.reservas.push(nueva);
-
-    const lab = this.laboratorios.find((l) => l.id === reserva.laboratorioId);
-    if (lab) {
-      lab.estado = "ocupado";
-      lab.maestro = reserva.maestro;
-      lab.horaEntrada = "10:00";
-      lab.horaSalida = "11:00";
-    }
-    return nueva;
-  }
-
-  obtenerReservas() {
-    return this.reservas;
+    
   }
 }

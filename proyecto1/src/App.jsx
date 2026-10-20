@@ -8,7 +8,7 @@ import EstadoLaboratorios from "./Componentes/EstadoLaboratorios";
 import FormularioReserva from "./Componentes/FormularioReserva";
 import Asistencia from "./Componentes/Asistencia";
 import HorarioAdmin from "./Componentes/HorarioAdmin";
-
+     
 import { gestorLaboratorios } from "./Clases/gestorLaboratorios";
 import { GestorAsistencia } from "./Clases/gestorAsistencia";
 import { Laboratorio_Datos } from "./Base_Nombres/Laboratorios";
@@ -21,6 +21,7 @@ function App() {
 
   const [gestorAsistencia] = useState(
     () => new GestorAsistencia(Reserva_Datos)
+    
   );
 
   const [sesion, setSesion] = useState(null);
@@ -63,7 +64,7 @@ function App() {
             laboratorio={labSeleccionado}
             onGuardar={(datos) => {
               gestor.registrarReserva(datos);
-              alert("Reserva registrada ✅");
+              alert("Reserva registrada ");
               setLabSeleccionado(null);
               setVista("estado");
             }}
